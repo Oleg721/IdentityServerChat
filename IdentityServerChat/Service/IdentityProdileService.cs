@@ -34,6 +34,8 @@ namespace EntityServerTests.Service
             var rolesClaim = (await _userManager.GetRolesAsync(user))
                 .Select(e => new Claim(ClaimTypes.Role, e));
             var claims = await _userManager.GetClaimsAsync(user) as List<Claim>;
+            claims.Add(new Claim("name", user.UserName));
+            claims.Add(new Claim(ClaimTypes.Email, user.Email));
             claims.AddRange(rolesClaim);
             
 

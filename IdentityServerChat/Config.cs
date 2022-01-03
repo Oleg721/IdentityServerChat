@@ -79,22 +79,24 @@ namespace IdentityServerAspNetIdentity
                     ClientId = "mvc2",
                    // ClientSecrets = { new Secret("secret".Sha256()) },
                     AllowedGrantTypes = GrantTypes.Code,
-                    //RefreshTokenUsage = TokenUsage.OneTimeOnly,
+                    RefreshTokenUsage = TokenUsage.OneTimeOnly,
                  //   RequireConsent = false,
-                   // AllowOfflineAccess = true,
+                    AllowOfflineAccess = true,
                     RequireClientSecret = false,
-                  RequirePkce = true,
-                   AllowAccessTokensViaBrowser = true,
+                    AccessTokenLifetime = 100,
+                    RequirePkce = true,
+                    AllowAccessTokensViaBrowser = true,
                     // where to redirect to after login
                     RedirectUris = { "http://localhost:4200/sign-up" },
                    
                     // where to redirect to after logout
                     PostLogoutRedirectUris = { "http://localhost:4200" },
-
+                    AlwaysIncludeUserClaimsInIdToken = true,
                     AllowedScopes = new List<string>
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
-                        //IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.OfflineAccess
                     }
                 },
 
