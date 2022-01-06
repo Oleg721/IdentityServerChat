@@ -11,8 +11,10 @@ namespace Api.Model
         [Key]
         public int Id { get; set; }
         [Required]
-        public string UserId { get; set; }
         public DateTime Date { get; set; }
         public string Text { get; set; }
+        [Required]
+        public string UserId { get; set; }
+        public ChatUser User { get; set; }
     }
 }

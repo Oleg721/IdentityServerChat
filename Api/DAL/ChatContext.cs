@@ -10,6 +10,8 @@ namespace Api.DAL
     public class ChatContext : DbContext
     {
         DbSet<Message> Messages { get; set; }
+
+        DbSet<ChatUser> Users { get; set;}
         public ChatContext(DbContextOptions options) : base(options)
         { }
 

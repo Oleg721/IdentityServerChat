@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace Api.Contracts
 {
-    public interface IUserRepository<T>
+   public interface IUserService<TDto, TId>
     {
-        public Task<bool> AddAsync(T user);
-        public Task<T> GetAsync(string Id);
-
+        public Task<TDto> GetAsync(TId id);
     }
 }

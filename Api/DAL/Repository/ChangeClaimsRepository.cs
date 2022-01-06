@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 
-namespace Api.DAL
+namespace Api.DAL.Repository
 {
     public class ChangeClaimsRepository
     {

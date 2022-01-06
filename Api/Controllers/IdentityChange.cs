@@ -4,8 +4,8 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Api.DAL;
 using System.Security.Claims;
+using Api.DAL.Repository;
 
 namespace Api.Controllers
 {

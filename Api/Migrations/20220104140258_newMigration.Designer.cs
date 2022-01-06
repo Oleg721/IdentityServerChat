@@ -4,14 +4,16 @@ using Api.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Api.Migrations
 {
     [DbContext(typeof(ChatContext))]
-    partial class ChatContextModelSnapshot : ModelSnapshot
+    [Migration("20220104140258_newMigration")]
+    partial class newMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -19,7 +21,7 @@ namespace Api.Migrations
                 .HasAnnotation("ProductVersion", "5.0.13")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Api.Model.ChatUser", b =>
+            modelBuilder.Entity("Api.Model.ChatUser<string>", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -27,13 +29,9 @@ namespace Api.Migrations
                     b.Property<int>("Color")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("ChatUser<string>");
                 });
 
             modelBuilder.Entity("Api.Model.Message", b =>
@@ -50,7 +48,6 @@ namespace Api.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -62,16 +59,14 @@ namespace Api.Migrations
 
             modelBuilder.Entity("Api.Model.Message", b =>
                 {
-                    b.HasOne("Api.Model.ChatUser", "User")
+                    b.HasOne("Api.Model.ChatUser<string>", "User")
                         .WithMany("messages")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Api.Model.ChatUser", b =>
+            modelBuilder.Entity("Api.Model.ChatUser<string>", b =>
                 {
                     b.Navigation("messages");
                 });

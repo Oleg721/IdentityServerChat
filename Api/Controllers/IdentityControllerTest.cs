@@ -5,24 +5,32 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Api.Policy;
+using Api.Service;
+using System.Threading.Tasks;
+using Api.Contracts;
+using Api.DTO;
 
 namespace Api.Controllers
 {
+    [AllowAnonymous]
     [Route("identityT/")]
     public class IdentityControllerTest : ControllerBase
     {
-        ChangePolicyFactory _changePolicyFactory;
-        public IdentityControllerTest(ChangePolicyFactory changePolicyFactory)
+        private ChangePolicyFactory _changePolicyFactory;
+        private IUserService<ChatUserDto, string> _userService;
+        public IdentityControllerTest(ChangePolicyFactory changePolicyFactory, IUserService<ChatUserDto, string> userService)
         {
             _changePolicyFactory = changePolicyFactory;
+            _userService = userService;
         }
 
         [AllowAnonymous]
         [Route("t")]
         [HttpGet]
-        public IActionResult test()
+        public async Task<IActionResult> test(string id)
         {
-            return Ok("TEST GET");
+            var user =  await _userService.GetAsync(id);
+            return Ok(user);
         }
 
         [Route("claim/not")]

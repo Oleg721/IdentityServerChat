@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Api.Contracts;
 
-namespace Api.Repository
+namespace Api.DAL.Repository
 {
     public class MessageRepository : IMessageRepository<Message>
     {

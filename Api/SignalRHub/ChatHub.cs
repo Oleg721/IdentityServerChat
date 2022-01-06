@@ -1,37 +1,59 @@
 ﻿using Api.Contracts;
 using Api.DTO;
+using Api.Handler;
 using Api.ModelView;
-using Microsoft.AspNetCore.Authorization;
+using Api.Service;
+using AutoMapper;
 using Microsoft.AspNetCore.SignalR;
 using System;
+using Api.Util;
 using System.Threading.Tasks;
 
 namespace Api.SignalRHub
 {
-    [AllowAnonymous]
+
+
+    //[AllowAnonymous]
     public class ChatHub : Hub
     {
-
-        IMessageService _messageService;
-        public ChatHub(IMessageService messageService)
+        private ChatUserHandler _chatUserHandler;
+        private IMessageService _messageService;
+        private IUserService<ChatUserDto, string> _userService;
+        public ChatHub(
+            IUserService<ChatUserDto, string> userService,
+            IMessageService messageService,
+            OnlineUserService onlineUserService,
+            ChatUserHandler chatUserHandler,
+            IMapper mapper)
         {
             _messageService = messageService;
+            _userService = userService;
+            _chatUserHandler = chatUserHandler;
         }
 
-        public override Task OnConnectedAsync()
+
+        public override async Task OnConnectedAsync()
         {
             Console.WriteLine("Connected");
-            
-            Clients.Caller.SendAsync("GetUsers",new {users = Clients});
-            Clients.Caller.SendAsync("GetUsers", new { user = "someUser" });
-            return Task.CompletedTask;
+            await _chatUserHandler.AddUserAsync(Context.User.GetId(), Context);
+        }
+
+
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            Console.WriteLine($"Disconnect user {Context.ConnectionId}");
+           // await Clients.All.SendAsync("User","delete", "{}");
+            // _chatUserHandler.Delete(Context.User.GetId());
+            await _chatUserHandler.Delete(Context.ConnectionId);
+            await base.OnDisconnectedAsync(exception);
         }
 
 
         public async Task Send(MessageView message)
         {
             //var sendMessage = new MessageView() { };
-            var messageDTO = new MessageDTO() { 
+            var messageDTO = new MessageDTO()
+            {
                 UserId = message.UserId,
                 Date = message.Date,
                 Text = message.Text

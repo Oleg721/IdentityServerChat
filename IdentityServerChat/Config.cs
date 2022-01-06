@@ -83,7 +83,7 @@ namespace IdentityServerAspNetIdentity
                  //   RequireConsent = false,
                     AllowOfflineAccess = true,
                     RequireClientSecret = false,
-                    AccessTokenLifetime = 100,
+                  //  AccessTokenLifetime = 100,
                     RequirePkce = true,
                     AllowAccessTokensViaBrowser = true,
                     // where to redirect to after login

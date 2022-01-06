@@ -17,9 +17,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using Api.Contracts;
-using Api.Repository;
+using Api.DAL.Repository;
 using Api.Model;
 using Api.Service;
+using Api.DTO;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Threading.Tasks;
+using Api.Mapper;
+using Api.Handler;
 
 namespace Api
 {
@@ -34,9 +39,15 @@ namespace Api
         {
             string connectionString = Configuration.GetConnectionString("ChatConnection");
 
+            services.AddAutoMapper(new[] { typeof(MapperDAL), typeof(MapperView) });
             services.AddScoped<IMessageRepository<Message>, MessageRepository>();
             services.AddScoped<IMessageService, MessageService>();
+            services.AddScoped<IUserRepository<ChatUser>, UserRepositiry>();
+            services.AddScoped<IUserService<ChatUserDto, string>, UserService>();
+            services.AddScoped<ChatUserHandler>();
+            services.AddSingleton<OnlineUserService>();
             services.AddControllers();
+
             services.AddSignalR();
             //services.AddCors();
             services.AddDbContext<ChatContext>(options => options.UseSqlServer(connectionString));
@@ -61,9 +72,26 @@ namespace Api
                         RequireExpirationTime = true,
                         ValidateLifetime = true,
                         ValidateAudience = false,
+                        ValidateIssuer = true,
                         ClockSkew = TimeSpan.Zero
                     };
-            
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+
+                            var path = context.HttpContext.Request.Path;
+                            if (!string.IsNullOrEmpty(accessToken) &&
+                                (path.StartsWithSegments("/chat")))
+                            {
+                                context.Token = accessToken;
+                            }
+                            return Task.CompletedTask;
+                        }
+                    };
+
                 });
             services.AddSingleton<ChangePolicyFactory>();
             // adds an authorization policy to make sure the token is for scope 'api1'
